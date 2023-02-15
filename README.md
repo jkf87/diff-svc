@@ -1,62 +1,63 @@
 # Diff-SVC
-Singing Voice Conversion via diffusion model
+확산 모델을 통한 노래 음성 변환
 
-## updates:
->2022.12.4 44.1kHz声码器开放申请，正式提供对44.1kHz的支持\
-2022.11.28 增加了默认打开的no_fs2选项，可优化部分网络，提升训练速度、缩减模型体积，对于未来新训练的模型有效\
-2022.11.23 修复了一个重大bug，曾导致可能将用于推理的原始gt音频转变采样率为22.05kHz,对于由此造成的影响我们表示十分抱歉，请务必检查自己的测试音频，并使用更新后的代码\
-2022.11.22 修复了很多bug，其中有几个影响推理效果重大的bug\
-2022.11.20 增加对推理时多数格式的输入和保存，无需手动借助其他软件转换\
-2022.11.13 修正中断后读取模型的epoch/steps显示问题，添加f0处理的磁盘缓存，添加实时变声推理的支持文件\
-2022.11.11 修正切片时长误差，补充对44.1khz的适配, 增加对contentvec的支持\
-2022.11.4 添加梅尔谱保存功能\
-2022.11.2 整合新声码器代码，更新parselmouth算法\
-2022.10.29 整理推理部分，添加长音频自动切片功能。\
-2022.10.28 将hubert的onnx推理迁移为torch推理，并整理推理逻辑。\
-<font color=#FFA500>如原先下载过onnx的hubert模型需重新下载并替换为pt模型</font>，config不需要改，目前可以实现1060 6G显存的直接GPU推理与预处理，详情请查看文档。\
-2022.10.27 更新依赖文件，去除冗余依赖。\
-2022.10.27 修复了一个严重错误，曾导致在gpu服务器上hubert仍使用cpu推理，速度减慢3-5倍，影响预处理与推理，不影响训练\
-2022.10.26 修复windows上预处理数据在linux上无法使用的问题，更新部分文档\
-2022.10.25 编写推理/训练详细文档，修改整合部分代码，增加对ogg格式音频的支持(无需与wav区分，直接使用即可)\
-2022.10.24 支持对自定义数据集的训练，并精简代码\
-2022.10.22 完成对opencpop数据集的训练并创建仓库
+## 업데이트:
+2022.12.4 44.1kHz 보코더 오픈 애플리케이션, 공식적으로 44.1kHz 지원 제공 \.
+2022.11.28 일부 네트워크를 최적화하고, 학습 속도를 개선하며, 모델 크기를 줄이고, 향후 새로운 학습 모델에 효과적 일 수있는 기본 no_fs2 옵션이 추가되었습니다.
+2022.11.23 추론에 사용되는 원본 gt 오디오가 샘플 속도를 22.05kHz로 변경할 수있는 주요 버그 수정, 영향을 주셔서 죄송합니다. 테스트 오디오를 확인하고 업데이트 된 코드를 사용하십시오 \.
+2022.11.22 추론 효과에 큰 영향을 미치는 몇 가지 버그를 포함하여 많은 버그가 수정되었습니다 \\.
+2022.11.20 다른 소프트웨어로 수동 변환없이 추론을위한 대부분의 형식의 입력 및 저장 추가 \.
+2022.11.13 중단 후 모델 읽기의 에포크 / 단계 표시 문제 수정, f0 처리의 디스크 캐시 추가, 실시간 사운드 변경 추론을위한 지원 파일 추가 \\.
+2022.11.11 슬라이스 지속 시간 오류 수정, 44.1khz 적응 추가, contentvec\ 지원 추가.
+2022.11.4 Merle 스펙트럼 저장 기능 추가\.
+2022.11.2 새로운 보코더 코드 통합, 파셀마우스 알고리즘 업데이트\.
+2022.10.29 추론 섹션 개편, 긴 오디오 자동 슬라이스 기능 추가 \\.
+2022.10.28 휴버트의 onnx 인터페이스를 파이토치 인터페이스로 마이그레이션하고 인터페이스 로직을 깔끔하게 정리하였습니다. \
+<font color=#FFA500>기존에 다운로드한 onnx hubert 모델을 다시 다운로드하여 pt 모델로 교체해야 하는 경우</font>, c구성은 변경할 필요가 없으며,  현재 1060 6G 비디오 메모리에 대해 직접 GPU 추론 및 전처리를 구현할 수 있으며 자세한 내용은 설명서를 참조하세요. 
+2022.10.27 종속성 파일을 업데이트하여 중복 종속성을 제거합니다. \
+2022.10.27 Hubert가 여전히 GPU 서버에서 CPU 추론을 사용하여 속도가 3~5배 느려지고 전처리 및 추론에 영향을 미치지만 훈련에는 영향을 미치지 않는 심각한 버그 수정 \.
+2022.10.26 윈도우에서 데이터 전처리가 리눅스에서 작동하지 않는 문제 수정, 일부 문서 업데이트 \.
+2022.10.25 추론/훈련에 대한 상세 문서 작성, 코드 일부 수정 및 통합, ogg 형식 오디오 지원 추가(wav와 구분할 필요 없이 바로 사용) \\.
+2022.10.24 사용자 지정 데이터 세트에 대한 교육 지원 및 코드 간소화 \
+2022.10.22 오픈팝 데이터 세트에 대한 교육 완료 및 리포지토리 생성
 
-## 注意事项/Notes：
->本项目是基于学术交流目的建立，并非为生产环境准备，不对由此项目模型产生的任何声音的版权问题负责。\
-如将本仓库代码二次分发，或将由此项目产出的任何结果公开发表(包括但不限于视频网站投稿)，请注明原作者及代码来源(此仓库)。\
-如果将此项目用于任何其他企划，请提前联系并告知本仓库作者,十分感谢。\
->This project is established for academic exchange purposes and is not intended for production environments. We are not responsible for any copyright issues arising from the sound produced by this project's model. \
-If you redistribute the code in this repository or publicly publish any results produced by this project (including but not limited to video website submissions), please indicate the original author and source code (this repository). \
-If you use this project for any other plans, please contact and inform the author of this repository in advance. Thank you very much.
+## Caution/Notes.
+>본 프로젝트는 학술적 커뮤니케이션 목적으로 제작되었으며, 프로덕션 환경을 위한 것이 아니므로 본 프로젝트의 모델에서 생성된 사운드의 저작권 문제에 대해 책임을 지지 않습니다. \
+본 리포지토리의 코드를 두 번 배포하거나 본 프로젝트로 제작한 결과물을 공개적으로 게시할 경우(동영상 웹사이트 기고 포함, 이에 국한되지 않음) 원저작자와 코드의 출처(본 리포지토리)를 반드시 명시해 주세요. \
+다른 프로젝트에 본 프로젝트를 사용할 경우, 사전에 본 저장소의 작성자에게 연락하여 알려주시기 바랍니다. \이 프로젝트는 학술적 용도로 개설되었습니다.
+>이 프로젝트는 학술적 교류를 목적으로 설립되었으며 프로덕션 환경을 위한 것이 아닙니다. 이 프로젝트의 모델에서 생성된 사운드로 인해 발생하는 문제.
+이 저장소의 코드를 재배포하거나 이 프로젝트에서 생성된 결과물(동영상 웹사이트 제출을 포함하되 이에 국한되지 않음)을 공개적으로 게시하는 경우, 원저자와 소스 코드(이 저장소)를 표시해 주세요. \
+이 프로젝트를 다른 계획에 사용할 경우, 사전에 이 리포지토리의 작성자에게 연락하여 알려주시기 바랍니다.
 
-## 推理/inference：
+## 추론/inference.
 
->查看./inference.ipynb
+>View. /inference.ipynb
 
 
-## 预处理/preprocessing:
+## 전처리/preprocessing:
 ```
 export PYTHONPATH=.
 CUDA_VISIBLE_DEVICES=0 python preprocessing/binarize.py --config training/config.yaml
 ```
-## 训练/training:
+## training/training:
 ```
-CUDA_VISIBLE_DEVICES=0 python run.py --config training/config.yaml --exp_name [your project name] --reset 
+CUDA_VISIBLE_DEVICES=0 python run.py --config training/config.yaml --exp_name [사용자 프로젝트 이름] --reset
 ```
-详细训练过程和各种参数介绍请查看[推理与训练说明](./doc/train_and_inference.markdown)\
-Please refer to the [Inference and Training Instructions](./doc/training_and_inference_EN.markdown) for a detailed training process and introduction to various parameters.Thank you for the translation provided by @ρoem.
-### 已训练模型/trained models
->目前本项目已在众多数据集进行过训练和测试。部分ckpt文件、demo音频和推理训练所需的其他文件请在下方QQ频道(频道号：5763z98e4m)内下载\
-使用QQ扫描此二维码(如不能加入，请尝试一个合适的网络环境):\
-This project has been trained and tested on many datasets. You can download the ckpt files, demo audio, and other files required for inference and training in the QQ channel below by using QQ to scan this QR code (if you cannot join, please try a suitable network environment).\
+훈련 과정과 다양한 파라미터에 대한 자세한 설명은 [추론 및 훈련 노트](. /doc/train_and_inference.markdown)\를 참조하세요.
+자세한 훈련 과정과 다양한 파라미터에 대한 소개는 [추론 및 훈련 지침](. /doc/training_and_inference_EN.markdown)을 참조하시기 바랍니다. 번역을 제공해 주신 @ρoem님께 감사드립니다.
+### 훈련된 모델/trained models
+>이 프로젝트는 수많은 데이터 세트에서 학습 및 테스트를 거쳤습니다. 추론 훈련에 필요한 일부 ckpt 파일, 데모 오디오 및 기타 파일은 아래 QQ 채널에서 다운로드할 수 있습니다(채널 번호: 5763z98e4m)\.
+QQ를 사용하여이 QR 코드를 스캔하십시오 (가입 할 수없는 경우 적절한 네트워크 환경을 시도하십시오) :\.
+이 프로젝트는 많은 데이터 세트에서 학습 및 테스트를 거쳤습니다. 추론 및 훈련에 필요한 ckpt 파일, 데모 오디오 및 기타 파일을 다운로드할 수 있습니다 QQ를 사용하여 이 QR 코드를 스캔하면 아래 QQ 채널에서 추론 및 훈련에 필요한 ckpt 파일, 데모 오디오 및 기타 파일을 다운로드할 수 있습니다(참여가 불가능한 경우 적합한 네트워크 환경을 시도해 보세요). \
+
 <img src="./ckpt.png" width=256/>\
-For English support, you can join this discord: 
+영어 지원을 받으려면 이 디스코드에 가입하세요: 
 
-[![Discord](https://img.shields.io/discord/1044927142900809739?color=%23738ADB&label=Discord&style=for-the-badge)](https://discord.gg/jvA5c2xzSE)
+[![디스코드](https://img.shields.io/discord/1044927142900809739?color=%23738ADB&label=Discord&style=for-the-badge)](https://discord.gg/jvA5c2xzSE)
 
-## Acknowledgements
->项目基于[diffsinger](https://github.com/MoonInTheRiver/DiffSinger)、[diffsinger(openvpi维护版)](https://github.com/openvpi/DiffSinger)、[soft-vc](https://github.com/bshall/soft-vc)开发.\
-同时也十分感谢openvpi成员在开发训练过程中给予的帮助。\
-This project is based on [diffsinger](https://github.com/MoonInTheRiver/DiffSinger), [diffsinger (openvpi maintenance version)](https://github.com/openvpi/DiffSinger), and [soft-vc](https://github.com/bshall/soft-vc). We would also like to thank the openvpi members for their help during the development and training process. \
+## 감사
+>프로젝트 기반:[diffsinger](https://github.com/MoonInTheRiver/DiffSinger),[diffsinger(openvpi维护版)](https://github.com/openvpi/DiffSinger),[soft-vc](https://github.com/bshall/soft-vc)开发.\
+동시에 개발 과정에서 도움을 주신 OpenVPI 개발자에게도 감사드립니다.
+이 프로젝트는 [diffsinger](https://github.com/MoonInTheRiver/DiffSinger), [diffsinger (openvpi 유지보수 버전)](https://github.com/openvpi/DiffSinger), [soft-vc](https://github.com/bshall/soft-vc)를 기반으로 합니다. 또한 개발 및 교육 과정에서 도움을 주신 openvpi 회원 여러분께도 감사의 말씀을 드립니다. \
 >注意：此项目与同名论文[DiffSVC](https://arxiv.org/abs/2105.13871)无任何联系，请勿混淆！\
-Note: This project has no connection with the paper of the same name [DiffSVC](https://arxiv.org/abs/2105.13871), please do not confuse them!
+참고: 이 프로젝트는 같은 이름의 논문 [DiffSVC](https://arxiv.org/abs/2105.13871)와 관련이 없으니 혼동하지 마세요!
